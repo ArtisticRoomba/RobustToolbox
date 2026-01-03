@@ -6,7 +6,7 @@ namespace Robust.Benchmarks.NumericsHelpers;
 [Virtual]
 public class AddBenchmark
 {
-    [Params(32, 128)]
+    [Params(4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192)]
     public int N { get; set; }
 
     [Params(1,2)]

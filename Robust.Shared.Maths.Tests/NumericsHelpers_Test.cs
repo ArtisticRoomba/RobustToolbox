@@ -111,6 +111,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            3f,
+            -4f,
+            0.25f,
+            -0.5f,
+            99.99f,
+            -250f,
+            1.5f,
+            -2.5f,
         };
 
         private static readonly float[] MultiplyB =
@@ -123,6 +131,14 @@ namespace Robust.Shared.Maths.Tests
             1f,
             4321f,
             567.123f,
+            2f,
+            -8f,
+            0.5f,
+            -2f,
+            0.5f,
+            -1f,
+            -3f,
+            4f,
         };
 
         private static readonly float[] MultiplyResult =
@@ -135,6 +151,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             5332114f,
             384642.101f,
+            6f,
+            32f,
+            0.125f,
+            1f,
+            49.995f,
+            250f,
+            -4.5f,
+            -10f,
         };
 
         [Test]
@@ -167,6 +191,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(MultiplyResult, s);
         }
 
+        [Test]
+        public void Multiply512()
+        {
+            Span<float> s = stackalloc float[MultiplyResult.Length];
+
+            NumericsHelpers.Multiply512(MultiplyA, MultiplyB, s);
+
+            EqualsApprox(MultiplyResult, s);
+        }
+
         #endregion
 
         #region MultiplyByScalar
@@ -181,6 +215,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            12.34f,
+            -56.78f,
+            0.00123f,
+            98765f,
+            -4321f,
+            5555.5f,
+            -0.25f,
+            2468f,
         };
 
         private const float MultiplyByScalarB = 50f;
@@ -195,6 +237,14 @@ namespace Robust.Shared.Maths.Tests
             5f,
             61700f,
             33911.7f,
+            617f,
+            -2839f,
+            0.0615f,
+            4938250f,
+            -216050f,
+            277775f,
+            -12.5f,
+            123400f,
         };
 
 
@@ -228,6 +278,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(MultiplyByScalarResult, s);
         }
 
+        [Test]
+        public void MultiplyByScalar512()
+        {
+            Span<float> s = stackalloc float[MultiplyByScalarResult.Length];
+
+            NumericsHelpers.Multiply512(MultiplyByScalarA, MultiplyByScalarB, s);
+
+            EqualsApprox(MultiplyByScalarResult, s);
+        }
+
         #endregion
 
         #region Divide
@@ -242,6 +302,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            12.34f,
+            -56.78f,
+            0.00123f,
+            98765f,
+            -4321f,
+            5555.5f,
+            -0.25f,
+            2468f,
         };
 
         private static readonly float[] DivideB =
@@ -254,6 +322,14 @@ namespace Robust.Shared.Maths.Tests
             1f,
             4321f,
             567.123f,
+            2.5f,
+            -3.75f,
+            0.5f,
+            -1.25f,
+            4f,
+            -5f,
+            0.125f,
+            -0.5f,
         };
 
         private static readonly float[] DivideResult =
@@ -266,6 +342,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             0.285582041f,
             1.19592046f,
+            4.936f,
+            15.1413336f,
+            0.00246f,
+            -79012f,
+            -1080.25f,
+            -1111.1f,
+            -2f,
+            -4936f,
         };
 
         [Test]
@@ -298,6 +382,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(DivideResult, s);
         }
 
+        [Test]
+        public void Divide512()
+        {
+            Span<float> s = stackalloc float[DivideResult.Length];
+
+            NumericsHelpers.Divide512(DivideA, DivideB, s);
+
+            EqualsApprox(DivideResult, s);
+        }
+
         #endregion
 
         #region DivideByScalar
@@ -312,6 +406,14 @@ namespace Robust.Shared.Maths.Tests
             9999f,
             12340f,
             678.234f,
+            12.34f,
+            -56.78f,
+            0.00123f,
+            98765f,
+            -4321f,
+            5555.5f,
+            -0.25f,
+            2468f,
         };
 
         private const float DivideByScalarB = 1234f;
@@ -326,6 +428,14 @@ namespace Robust.Shared.Maths.Tests
             8.10291734f,
             10f,
             0.549622366f,
+            0.01f,
+            -0.046012967f,
+            0.000000996f,
+            80.0364685f,
+            -3.50162077f,
+            4.5020256f,
+            -0.000202593f,
+            2f,
         };
 
         [Test]
@@ -358,6 +468,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(DivideByScalarResult, s);
         }
 
+        [Test]
+        public void DivideByScalar512()
+        {
+            Span<float> s = stackalloc float[DivideByScalarResult.Length];
+
+            NumericsHelpers.Divide512(DivideByScalarA, DivideByScalarB, s);
+
+            EqualsApprox(DivideByScalarResult, s);
+        }
+
         #endregion
 
         #region Add
@@ -372,7 +492,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
-            1f,
+            1.23f,
+            -4.56f,
+            7.89f,
+            0.01f,
+            -0.02f,
+            10f,
+            -20f,
+            30f,
         };
 
         private static readonly float[] AddB =
@@ -385,7 +512,14 @@ namespace Robust.Shared.Maths.Tests
             1f,
             4321f,
             567.123f,
-            -1f,
+            -1.23f,
+            4.56f,
+            -7.89f,
+            -0.01f,
+            0.02f,
+            -10f,
+            20f,
+            -30f,
         };
 
         private static readonly float[] AddResult =
@@ -398,6 +532,13 @@ namespace Robust.Shared.Maths.Tests
             1.1f,
             5555f,
             1245.357f,
+            0f,
+            0f,
+            0f,
+            0f,
+            0f,
+            0f,
+            0f,
             0f,
         };
 
@@ -431,6 +572,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(AddResult, s);
         }
 
+        [Test]
+        public void Add512()
+        {
+            Span<float> s = stackalloc float[AddResult.Length];
+
+            NumericsHelpers.Add512(AddA, AddB, s);
+
+            EqualsApprox(AddResult, s);
+        }
+
         #endregion
 
         #region AddByScalar
@@ -445,6 +596,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            -50f,
+            75f,
+            -125f,
+            250f,
+            -500f,
+            1000f,
+            -2000f,
+            4000f,
         };
 
         private const float AddByScalarB = 100f;
@@ -459,6 +618,14 @@ namespace Robust.Shared.Maths.Tests
             100.1f,
             1334f,
             778.234f,
+            50f,
+            175f,
+            -25f,
+            350f,
+            -400f,
+            1100f,
+            -1900f,
+            4100f,
         };
 
         [Test]
@@ -491,6 +658,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(AddByScalarResult, s);
         }
 
+        [Test]
+        public void AddByScalar512()
+        {
+            Span<float> s = stackalloc float[AddByScalarResult.Length];
+
+            NumericsHelpers.Add512(AddByScalarA, AddByScalarB, s);
+
+            EqualsApprox(AddByScalarResult, s);
+        }
+
         #endregion
 
         #region HorizontalAdd
@@ -514,9 +691,17 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            1.23f,
+            -4.56f,
+            7.89f,
+            0.01f,
+            -0.02f,
+            10f,
+            -20f,
+            30f,
         };
 
-        private const float HorizontalAddResult = 4042.668f;
+        private const float HorizontalAddResult = 4092.668f;
 
         [Test]
         public void HorizontalAddScalar()
@@ -542,6 +727,14 @@ namespace Robust.Shared.Maths.Tests
             Assert.That(added, Is.Approximately(HorizontalAddResult));
         }
 
+        [Test]
+        public void HorizontalAdd512()
+        {
+            var added = NumericsHelpers.HorizontalAdd512(HorizontalAddA);
+
+            Assert.That(added, Is.Approximately(HorizontalAddResult));
+        }
+
         #endregion
 
         #region Sub
@@ -556,6 +749,7 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            50f,
         };
 
         private static readonly float[] SubB =
@@ -568,6 +762,14 @@ namespace Robust.Shared.Maths.Tests
             1f,
             4321f,
             567.123f,
+            -1.23f,
+            4.56f,
+            -7.89f,
+            -0.01f,
+            0.02f,
+            -10f,
+            20f,
+            -30f,
         };
 
         private static readonly float[] SubResult =
@@ -580,6 +782,14 @@ namespace Robust.Shared.Maths.Tests
             -0.9f,
             -3087f,
             111.11100f,
+            2.46f,
+            -9.12f,
+            15.78f,
+            0.02f,
+            -0.04f,
+            20f,
+            -40f,
+            60f,
         };
 
         [Test]
@@ -612,6 +822,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(SubResult, s);
         }
 
+        [Test]
+        public void Sub512()
+        {
+            Span<float> s = stackalloc float[SubResult.Length];
+
+            NumericsHelpers.Sub512(SubA, SubB, s);
+
+            EqualsApprox(SubResult, s);
+        }
+
         #endregion
 
         #region SubByScalar
@@ -626,6 +846,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            -50f,
+            75f,
+            -125f,
+            250f,
+            -500f,
+            1000f,
+            -2000f,
+            4000f,
         };
 
         private const float SubByScalarB = 100f;
@@ -640,6 +868,14 @@ namespace Robust.Shared.Maths.Tests
             -99.9f,
             1134f,
             578.234f,
+            -150f,
+            -25f,
+            -225f,
+            150f,
+            -600f,
+            900f,
+            -2100f,
+            3900f,
         };
 
         [Test]
@@ -672,6 +908,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(SubByScalarResult, s);
         }
 
+        [Test]
+        public void SubByScalar512()
+        {
+            Span<float> s = stackalloc float[SubByScalarResult.Length];
+
+            NumericsHelpers.Sub512(SubByScalarA, SubByScalarB, s);
+
+            EqualsApprox(SubByScalarResult, s);
+        }
+
         #endregion
 
         #region Abs
@@ -687,6 +933,13 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             -1234f,
             -678.234f,
+            1.23f,
+            -4.56f,
+            7.89f,
+            -0.01f,
+            0.02f,
+            -10f,
+            20f,
         };
 
         private static readonly float[] AbsResult =
@@ -700,6 +953,13 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            1.23f,
+            4.56f,
+            7.89f,
+            0.01f,
+            0.02f,
+            10f,
+            20f,
         };
 
         [Test]
@@ -732,6 +992,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(AbsResult, s);
         }
 
+        [Test]
+        public void Abs512()
+        {
+            Span<float> s = stackalloc float[AbsResult.Length];
+
+            NumericsHelpers.Abs512(AbsA, s);
+
+            EqualsApprox(AbsResult, s);
+        }
+
         #endregion
 
         #region Min
@@ -746,6 +1016,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            1.23f,
+            -4.56f,
+            7.89f,
+            0.01f,
+            -0.02f,
+            10f,
+            -20f,
+            30f,
         };
 
         private static readonly float[] MinB =
@@ -758,6 +1036,14 @@ namespace Robust.Shared.Maths.Tests
             1f,
             4321f,
             567.123f,
+            -1.23f,
+            4.56f,
+            -7.89f,
+            -0.01f,
+            0.02f,
+            -10f,
+            20f,
+            -30f,
         };
 
         private static readonly float[] MinResult =
@@ -770,6 +1056,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             567.123f,
+            -1.23f,
+            -4.56f,
+            -7.89f,
+            -0.01f,
+            -0.02f,
+            -10f,
+            -20f,
+            -30f,
         };
 
         [Test]
@@ -802,6 +1096,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(MinResult, s);
         }
 
+        [Test]
+        public void Min512()
+        {
+            Span<float> s = stackalloc float[MinResult.Length];
+
+            NumericsHelpers.Min512(MinA, MinB, s);
+
+            EqualsApprox(MinResult, s);
+        }
+
         #endregion
 
         #region MinByScalar
@@ -819,6 +1123,11 @@ namespace Robust.Shared.Maths.Tests
             0.05f,
             0.5f,
             -12.5f,
+            10f,
+            -20f,
+            30f,
+            -40f,
+            50f,
         };
 
         private const float MinByScalarB = 1f;
@@ -836,6 +1145,11 @@ namespace Robust.Shared.Maths.Tests
             0.05f,
             0.5f,
             -12.5f,
+            1f,
+            -20f,
+            1f,
+            -40f,
+            1f,
         };
 
         [Test]
@@ -868,6 +1182,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(MinByScalarR, s);
         }
 
+        [Test]
+        public void MinByScalar512()
+        {
+            Span<float> s = stackalloc float[MinByScalarR.Length];
+
+            NumericsHelpers.Min512(MinByScalarA, MinByScalarB, s);
+
+            EqualsApprox(MinByScalarR, s);
+        }
+
         #endregion
 
         #region Max
@@ -882,6 +1206,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            1.23f,
+            -4.56f,
+            7.89f,
+            0.01f,
+            -0.02f,
+            10f,
+            -20f,
+            30f,
         };
 
         private static readonly float[] MaxB =
@@ -894,6 +1226,14 @@ namespace Robust.Shared.Maths.Tests
             1f,
             4321f,
             567.123f,
+            -1.23f,
+            4.56f,
+            -7.89f,
+            -0.01f,
+            0.02f,
+            -10f,
+            20f,
+            -30f,
         };
 
         private static readonly float[] MaxResult =
@@ -906,6 +1246,14 @@ namespace Robust.Shared.Maths.Tests
             1f,
             4321f,
             678.234f,
+            1.23f,
+            4.56f,
+            7.89f,
+            0.01f,
+            0.02f,
+            10f,
+            20f,
+            30f,
         };
 
         [Test]
@@ -938,6 +1286,16 @@ namespace Robust.Shared.Maths.Tests
             EqualsApprox(MaxResult, s);
         }
 
+        [Test]
+        public void Max512()
+        {
+            Span<float> s = stackalloc float[MaxResult.Length];
+
+            NumericsHelpers.Max512(MaxA, MaxB, s);
+
+            EqualsApprox(MaxResult, s);
+        }
+
         #endregion
 
         #region MaxByScalar
@@ -952,6 +1310,14 @@ namespace Robust.Shared.Maths.Tests
             0.1f,
             1234f,
             678.234f,
+            -50f,
+            75f,
+            -125f,
+            250f,
+            -500f,
+            1000f,
+            -2000f,
+            4000f,
         };
 
         private const float MaxByScalarB = 100f;
@@ -966,6 +1332,14 @@ namespace Robust.Shared.Maths.Tests
             100f,
             1234f,
             678.234f,
+            100f,
+            100f,
+            100f,
+            250f,
+            100f,
+            1000f,
+            100f,
+            4000f,
         };
 
         [Test]
@@ -994,6 +1368,16 @@ namespace Robust.Shared.Maths.Tests
             Span<float> s = stackalloc float[MaxByScalarResult.Length];
 
             NumericsHelpers.Max256(MaxByScalarA, MaxByScalarB, s);
+
+            EqualsApprox(MaxByScalarResult, s);
+        }
+
+        [Test]
+        public void MaxByScalar512()
+        {
+            Span<float> s = stackalloc float[MaxByScalarResult.Length];
+
+            NumericsHelpers.Max512(MaxByScalarA, MaxByScalarB, s);
 
             EqualsApprox(MaxByScalarResult, s);
         }

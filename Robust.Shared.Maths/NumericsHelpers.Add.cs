@@ -26,6 +26,12 @@ namespace Robust.Shared.Maths
             if (a.Length != b.Length || a.Length != s.Length)
                 throw new ArgumentException("Length of arrays must be the same!");
 
+            if (Vector512Enabled && ValidLength512Single(a.Length))
+            {
+                Add512(a, b, s);
+                return;
+            }
+
             if (Vector256Enabled && LengthValid256Single(a.Length))
             {
                 Add256(a, b, s);
@@ -94,6 +100,31 @@ namespace Robust.Shared.Maths
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void Add512(ReadOnlySpan<float> a, ReadOnlySpan<float> b, Span<float> s)
+        {
+            var remainder = a.Length & (Vector512<float>.Count - 1);
+            var length = a.Length - remainder;
+
+            fixed (float* ptr = a)
+            fixed (float* ptrB = b)
+            fixed (float* ptrS = s)
+            {
+                for (var i = 0; i < length; i += Vector512<float>.Count)
+                {
+                    var j = Vector512.Load(ptr + i);
+                    var k = Vector512.Load(ptrB + i);
+
+                    Vector512.Add(j, k).Store(ptrS + i);
+                }
+            }
+
+            if (remainder != 0)
+            {
+                AddScalar(a, b, s, length, a.Length);
+            }
+        }
+
         #endregion
 
         #region AddByScalar
@@ -115,6 +146,12 @@ namespace Robust.Shared.Maths
         {
             if (a.Length != s.Length)
                 throw new ArgumentException("Length of arrays must be the same!");
+
+            if (Vector512Enabled && ValidLength512Single(a.Length))
+            {
+                Add512(a, b, s);
+                return;
+            }
 
             if (Vector256Enabled && LengthValid256Single(a.Length))
             {
@@ -184,6 +221,31 @@ namespace Robust.Shared.Maths
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void Add512(ReadOnlySpan<float> a, float b, Span<float> s)
+        {
+            var remainder = a.Length & (Vector512<float>.Count - 1);
+            var length = a.Length - remainder;
+
+            var scalar = Vector512.Create(b);
+
+            fixed (float* ptr = a)
+            fixed (float* ptrS = s)
+            {
+                for (var i = 0; i < length; i += Vector512<float>.Count)
+                {
+                    var j = Vector512.Load(ptr + i);
+
+                    Vector512.Add(j, scalar).Store(ptrS + i);
+                }
+            }
+
+            if (remainder != 0)
+            {
+                AddScalar(a, b, s, length, a.Length);
+            }
+        }
+
         #endregion
 
         #region HorizontalAdd
@@ -194,6 +256,11 @@ namespace Robust.Shared.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float HorizontalAdd(ReadOnlySpan<float> a)
         {
+            if (Vector512Enabled && ValidLength512Single(a.Length))
+            {
+                return HorizontalAdd512(a);
+            }
+
             if (Vector256Enabled && LengthValid256Single(a.Length))
             {
                 return HorizontalAdd256(a);
@@ -260,6 +327,33 @@ namespace Robust.Shared.Maths
             }
 
             var sum = SimdHelpers.AddHorizontal256(accumulator).GetElement(0);
+
+            if (remainder != 0)
+            {
+                sum += HorizontalAddScalar(a, length, a.Length);
+            }
+
+            return sum;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static float HorizontalAdd512(ReadOnlySpan<float> a)
+        {
+            var remainder = a.Length & (Vector512<float>.Count - 1);
+            var length = a.Length - remainder;
+
+            var accumulator = Vector512.Create(0f);
+
+            fixed (float* ptr = a)
+            {
+                for (var i = 0; i < length; i += Vector512<float>.Count)
+                {
+                    var j = Vector512.Load(ptr + i);
+                    accumulator = Vector512.Add(j, accumulator);
+                }
+            }
+
+            var sum = SimdHelpers.AddHorizontal512(accumulator).GetElement(0);
 
             if (remainder != 0)
             {

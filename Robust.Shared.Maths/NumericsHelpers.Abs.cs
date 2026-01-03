@@ -26,6 +26,12 @@ namespace Robust.Shared.Maths
             if (a.Length != s.Length)
                 throw new ArgumentException("Length of arrays must be the same!");
 
+            if (Vector512Enabled && ValidLength512Single(a.Length))
+            {
+                Abs512(a, s);
+                return;
+            }
+
             if (Vector256Enabled && LengthValid256Single(a.Length))
             {
                 Abs256(a, s);
@@ -85,6 +91,31 @@ namespace Robust.Shared.Maths
                     var j = Vector256.Load(ptr + i);
 
                     Vector256.BitwiseAnd(mask, j).Store(ptrS + i);
+                }
+            }
+
+            if (remainder != 0)
+            {
+                AbsScalar(a, s, length, a.Length);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void Abs512(ReadOnlySpan<float> a, Span<float> s)
+        {
+            var remainder = a.Length & (Vector512<float>.Count - 1);
+            var length = a.Length - remainder;
+
+            var mask = Vector512.Create(unchecked((uint)-1 >> 1)).AsSingle();
+
+            fixed (float* ptr = a)
+            fixed (float* ptrS = s)
+            {
+                for (var i = 0; i < length; i += Vector512<float>.Count)
+                {
+                    var j = Vector512.Load(ptr + i);
+
+                    Vector512.BitwiseAnd(mask, j).Store(ptrS + i);
                 }
             }
 

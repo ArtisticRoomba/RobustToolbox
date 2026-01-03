@@ -51,6 +51,27 @@ namespace Robust.Shared.Maths
             return n + d;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector512<float> AddHorizontal512(Vector512<float> v)
+        {
+            var pairwise = Vector512.Shuffle(
+                v,
+                Vector512.Create(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14)) + v;
+
+            var quad = Vector512.Shuffle(
+                pairwise,
+                Vector512.Create(2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13)) + pairwise;
+
+            var oct = Vector512.Shuffle(
+                quad,
+                Vector512.Create(4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11)) + quad;
+
+            var all = Vector512.Shuffle(
+                oct,
+                Vector512.Create(8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7)) + oct;
+            return all;
+        }
+
         #region GetAABB
 
         /// <summary>

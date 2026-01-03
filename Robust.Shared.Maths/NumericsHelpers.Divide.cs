@@ -26,6 +26,12 @@ namespace Robust.Shared.Maths
             if (a.Length != b.Length || a.Length != s.Length)
                 throw new ArgumentException("Length of arrays must be the same!");
 
+            if (Vector512Enabled && ValidLength512Single(a.Length))
+            {
+                Divide512(a, b, s);
+                return;
+            }
+
             if (Vector256Enabled && LengthValid256Single(a.Length))
             {
                 Divide256(a, b, s);
@@ -99,6 +105,31 @@ namespace Robust.Shared.Maths
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void Divide512(ReadOnlySpan<float> a, ReadOnlySpan<float> b, Span<float> s)
+        {
+            var remainder = a.Length & (Vector512<float>.Count - 1);
+            var length = a.Length - remainder;
+
+            fixed (float* ptr = a)
+            fixed (float* ptrB = b)
+            fixed (float* ptrS = s)
+            {
+                for (var i = 0; i < length; i += Vector512<float>.Count)
+                {
+                    var j = Vector512.Load(ptr + i);
+                    var k = Vector512.Load(ptrB + i);
+
+                    Vector512.Divide(j, k).Store(ptrS + i);
+                }
+            }
+
+            if (remainder != 0)
+            {
+                DivideScalar(a, b, s, length, a.Length);
+            }
+        }
+
         #endregion
 
         #region DivideByScalar
@@ -120,6 +151,12 @@ namespace Robust.Shared.Maths
         {
             if (a.Length != s.Length)
                 throw new ArgumentException("Length of arrays must be the same!");
+
+            if (Vector512Enabled && ValidLength512Single(a.Length))
+            {
+                Divide512(a, b, s);
+                return;
+            }
 
             if (Vector256Enabled && LengthValid256Single(a.Length))
             {
@@ -180,6 +217,31 @@ namespace Robust.Shared.Maths
                     var j = Vector256.Load(ptr + i);
 
                     Vector256.Divide(j, scalar).Store(ptrS + i);
+                }
+            }
+
+            if (remainder != 0)
+            {
+                DivideScalar(a, b, s, length, a.Length);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void Divide512(ReadOnlySpan<float> a, float b, Span<float> s)
+        {
+            var remainder = a.Length & (Vector512<float>.Count - 1);
+            var length = a.Length - remainder;
+
+            var scalar = Vector512.Create(b);
+
+            fixed (float* ptr = a)
+            fixed (float* ptrS = s)
+            {
+                for (var i = 0; i < length; i += Vector512<float>.Count)
+                {
+                    var j = Vector512.Load(ptr + i);
+
+                    Vector512.Divide(j, scalar).Store(ptrS + i);
                 }
             }
 
