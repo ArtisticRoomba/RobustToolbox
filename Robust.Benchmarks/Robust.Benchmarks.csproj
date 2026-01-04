@@ -16,7 +16,7 @@
     <ProjectReference Include="..\Robust.UnitTesting\Robust.UnitTesting.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" />
+    <PackageReference Include="BenchmarkDotNet" PrivateAssets="none"/>
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="prometheus-net" />
