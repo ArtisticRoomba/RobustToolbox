@@ -124,8 +124,17 @@ public partial class TestPair<TServer, TClient>
         {
             await OnCleanDispose();
         }
+        catch
+        {
+            if (State != PairState.Dead)
+                Kill();
+            throw;
+        }
         finally
         {
+            if (State is not (PairState.Dead or PairState.Ready))
+                Kill();
+
             DebugTools.Assert(State is PairState.Dead or PairState.Ready);
             ClearContext();
             Manager.Return(this);
