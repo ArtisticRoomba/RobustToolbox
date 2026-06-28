@@ -14,6 +14,8 @@ namespace Robust.Shared.Toolshed;
 // TODO: Audit this for sandboxability and expose some of these to content.
 internal static class ReflectionExtensions
 {
+    private static readonly ISawmill Sawmill = Logger.GetSawmill("toolshed.reflectionextensions");
+
     public static bool CanBeNull(this Type t)
     {
         return !t.IsValueType || t.IsGenericType(typeof(Nullable<>));
@@ -226,16 +228,16 @@ internal static class ReflectionExtensions
 
     public static void DumpGenericInfo(this Type t)
     {
-        Logger.Debug($"Info for {t.PrettyName()}");
-        Logger.Debug(
+        Sawmill.Debug($"Info for {t.PrettyName()}");
+        Sawmill.Debug(
             $"GP {t.IsGenericParameter} | MP {t.IsGenericMethodParameter} | TP {t.IsGenericTypeParameter} | DEF {t.IsGenericTypeDefinition} | TY {t.IsGenericType} | CON {t.IsConstructedGenericType}");
         if (t.IsGenericParameter)
-            Logger.Debug($"CONSTRAINTS: {string.Join(", ", t.GetGenericParameterConstraints().Select(PrettyName))}");
-        if (!t.IsGenericTypeDefinition && IsGenericRelated(t) && t.IsGenericType)
-            DumpGenericInfo(t.GetGenericTypeDefinition());
+            Sawmill.Debug($"CONSTRAINTS: {string.Join(", ", t.GetGenericParameterConstraints().Select(PrettyName))}");
+        if (!t.IsGenericTypeDefinition && t.IsGenericRelated() && t.IsGenericType)
+            t.GetGenericTypeDefinition().DumpGenericInfo();
         foreach (var p in t.GetGenericArguments())
         {
-            DumpGenericInfo(p);
+            p.DumpGenericInfo();
         }
     }
 
@@ -333,12 +335,10 @@ internal static class ReflectionExtensions
         return defaultPropertyAttribute == null
             ? null
             : type.GetRuntimeProperties()
-                .FirstOrDefault(
-                    pi =>
+                .FirstOrDefault(pi =>
                         pi.Name == defaultPropertyAttribute.MemberName
                         && pi.IsIndexerProperty()
-                        && pi.SetMethod?.GetParameters() is { } parameters
-                        && parameters.Length == 2
+                        && pi.SetMethod?.GetParameters() is { Length: 2 } parameters
                         && parameters[0].ParameterType == typeof(string));
     }
 

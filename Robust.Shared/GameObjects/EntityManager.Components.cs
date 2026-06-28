@@ -26,7 +26,7 @@ namespace Robust.Shared.GameObjects
         [IoC.Dependency] private IComponentFactory _componentFactory = default!;
 
 #if EXCEPTION_TOLERANCE
-        [IoC.Dependency] private readonly IRuntimeLog _runtimeLog = default!;
+        [IoC.Dependency] private IRuntimeLog _runtimeLog = default!;
 #endif
 
         public IComponentFactory ComponentFactory => _componentFactory;

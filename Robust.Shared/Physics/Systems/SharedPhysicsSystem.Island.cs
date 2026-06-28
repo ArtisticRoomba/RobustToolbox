@@ -332,7 +332,6 @@ public abstract partial class SharedPhysicsSystem
             // when contact broke so if you want to try that then GOOD LUCK.
             if (seed.Island) continue;
 
-            var seedUid = seed.Owner;
             var mapUid = xform.MapUid;
 
             // TODO: Handle this on client.
@@ -341,9 +340,9 @@ public abstract partial class SharedPhysicsSystem
                 continue;
             }
 
-            if (!EntityManager.MetaQuery.TryGetComponent(seedUid, out var metadata))
+            if (!EntityManager.MetaQuery.TryGetComponent(ent.Owner, out var metadata))
             {
-                Log.Error($"Found deleted entity {ToPrettyString(seedUid)} on map!");
+                Log.Error($"Found deleted entity {ToPrettyString(ent.Owner)} on map!");
                 RemoveSleepBody(ent);
                 continue;
             }
@@ -366,20 +365,17 @@ public abstract partial class SharedPhysicsSystem
 
             while (_bodyStack.TryPop(out var bodyEnt))
             {
-                var bodyUid = bodyEnt.Owner;
-                var body = bodyEnt.Comp1;
-
                 bodies.Add(bodyEnt);
 
                 _islandSet.Add(bodyEnt);
 
                 // Static bodies don't propagate islands
-                if (body.BodyType == BodyType.Static) continue;
+                if (bodyEnt.Comp1.BodyType == BodyType.Static) continue;
 
                 // As static bodies can never be awake (unlike Farseer) we'll set this after the check.
-                SetAwake(bodyUid, body, true, updateSleepTime: false);
+                SetAwake(bodyEnt, true, updateSleepTime: false);
 
-                var node = body.Contacts.First;
+                var node = bodyEnt.Comp1.Contacts.First;
 
                 while (node != null)
                 {
@@ -397,20 +393,20 @@ public abstract partial class SharedPhysicsSystem
 
                     contacts.Add(contact);
                     contact.Flags |= ContactFlags.Island;
-                    var other = contact.OtherBody(bodyUid);
+                    var other = contact.OtherBody(bodyEnt.Owner);
 
                     // Was the other body already added to this island?
                     if (other.Island) continue;
 
-                    var otherEnt = contact.OtherEnt(bodyUid);
-                    var otherXform = contact.OtherTransform(bodyUid);
+                    var otherEnt = contact.OtherEnt(bodyEnt.Owner);
+                    var otherXform = contact.OtherTransform(bodyEnt.Owner);
                     // TODO: Store this transform on the component directly.
                     _bodyStack.Push(new Entity<PhysicsComponent, TransformComponent>(otherEnt, other, otherXform));
                     other.Island = true;
                 }
 
                 // Handle joints
-                if (RelayTargetQuery.TryGetComponent(bodyUid, out var relayComp))
+                if (RelayTargetQuery.TryGetComponent(bodyEnt.Owner, out var relayComp))
                 {
                     foreach (var relay in relayComp.Relayed)
                     {
@@ -447,7 +443,7 @@ public abstract partial class SharedPhysicsSystem
                     }
                 }
 
-                if (JointQuery.TryGetComponent(bodyUid, out var jointComponent) &&
+                if (JointQuery.TryGetComponent(bodyEnt.Owner, out var jointComponent) &&
                     jointComponent.Relay == null)
                 {
                     foreach (var joint in jointComponent.Joints.Values)
@@ -1139,7 +1135,7 @@ public abstract partial class SharedPhysicsSystem
 
             var body = island.Bodies[i];
 
-            SetAwake(body.Owner, body, false);
+            SetAwake(body, false);
         }
     }
 }

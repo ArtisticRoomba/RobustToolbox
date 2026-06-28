@@ -23,7 +23,7 @@ namespace Robust.Shared.Serialization.Manager.Definition
         internal ImmutableArray<FieldDefinition> BaseFieldDefinitions { get; init; }
         internal bool IsRecord { get; init; }
 
-        public abstract bool TryGetDuplicates([NotNullWhen(true)] out string[] duplicates);
+        public abstract bool TryGetDuplicates(out string[] duplicates);
     }
 
     internal sealed partial class DataDefinition<T> : DataDefinition where T : notnull
@@ -70,7 +70,8 @@ namespace Robust.Shared.Serialization.Manager.Definition
 
             var dataFields = fieldDefs
                 .Select(f => f.Attribute)
-                .OfType<DataFieldAttribute>().ToArray();
+                .OfType<DataFieldAttribute>()
+                .ToArray();
 
             Duplicates = dataFields
                 .Where(f =>

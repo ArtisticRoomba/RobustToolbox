@@ -13,6 +13,7 @@ internal sealed partial class PrototypeReloadSystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private IComponentFactory _componentFactory = default!;
+    [Dependency] private MetaDataSystem _metaDataSys = default!;
 
     public override void Initialize()
     {
@@ -70,7 +71,6 @@ internal sealed partial class PrototypeReloadSystem : EntitySystem
         foreach (var (name, _) in newPrototypeComponents.Where(t => !ignoredComponents.Contains(t.name))
                      .Except(oldPrototypeComponents))
         {
-            var data = newPrototype.Components[name];
             var component = _componentFactory.GetComponent(name);
 
             if (!HasComp(entity, component.GetType()))
@@ -78,6 +78,6 @@ internal sealed partial class PrototypeReloadSystem : EntitySystem
         }
 
         // Update entity metadata
-        metaData.EntityPrototype = newPrototype;
+        _metaDataSys.SetEntityPrototype(entity, newPrototype);
     }
 }
